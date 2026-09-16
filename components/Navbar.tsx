@@ -13,13 +13,25 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+const BREAKPOINT = 768;
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const lastScrollY = useRef(0);
   const pathname = usePathname();
 
+  // Responsive: track window width
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < BREAKPOINT);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Hide on scroll down, show on scroll up
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
@@ -35,6 +47,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
@@ -78,79 +91,84 @@ export default function Navbar() {
             Asif<span style={{ color: "var(--accent)" }}>.</span>
           </Link>
 
-          {/* Desktop links */}
-          <ul
-            style={{
-              display: "flex",
-              gap: "0.25rem",
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-            }}
-            className="hidden md:flex"
-          >
-            {navLinks.map((link) => {
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
-              return (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    style={{
-                      display: "block",
-                      padding: "0.375rem 0.875rem",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: isActive ? 600 : 400,
-                      color: isActive ? "var(--accent)" : "var(--text-secondary)",
-                      textDecoration: "none",
-                      transition: "color 0.2s ease, background 0.2s ease",
-                      background: isActive ? "rgba(79, 156, 249, 0.08)" : "transparent",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) {
-                        (e.target as HTMLElement).style.color = "var(--text-primary)";
-                        (e.target as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) {
-                        (e.target as HTMLElement).style.color = "var(--text-secondary)";
-                        (e.target as HTMLElement).style.background = "transparent";
-                      }
-                    }}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          {/* Desktop nav links — hidden on mobile */}
+          {!isMobile && (
+            <ul
+              style={{
+                display: "flex",
+                gap: "0.25rem",
+                listStyle: "none",
+                margin: 0,
+                padding: 0,
+              }}
+            >
+              {navLinks.map((link) => {
+                const isActive =
+                  link.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      style={{
+                        display: "block",
+                        padding: "0.375rem 0.875rem",
+                        borderRadius: "6px",
+                        fontSize: "0.875rem",
+                        fontWeight: isActive ? 600 : 400,
+                        color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                        textDecoration: "none",
+                        transition: "color 0.2s ease, background 0.2s ease",
+                        background: isActive ? "rgba(79, 156, 249, 0.08)" : "transparent",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          (e.target as HTMLElement).style.color = "var(--text-primary)";
+                          (e.target as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          (e.target as HTMLElement).style.color = "var(--text-secondary)";
+                          (e.target as HTMLElement).style.background = "transparent";
+                        }
+                      }}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
 
-          {/* Mobile toggle */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isOpen}
-            className="md:hidden flex items-center justify-center"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: "var(--text-secondary)",
-              padding: "0.5rem",
-              borderRadius: "6px",
-            }}
-          >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Hamburger button — only on mobile */}
+          {isMobile && (
+            <button
+              onClick={() => setIsOpen((prev) => !prev)}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--text-secondary)",
+                padding: "0.5rem",
+                borderRadius: "6px",
+              }}
+            >
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </nav>
 
-        {/* Mobile menu */}
-        {isOpen && (
+        {/* Mobile dropdown */}
+        {isMobile && isOpen && (
           <div
             style={{
               borderTop: "1px solid var(--border)",
@@ -162,7 +180,9 @@ export default function Navbar() {
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {navLinks.map((link) => {
                 const isActive =
-                  link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                  link.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
                 return (
                   <li key={link.href}>
                     <Link

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, Download, ExternalLink, MapPin } from "lucide-react";
 import { FaLinkedin as Linkedin, FaGithub as Github } from "react-icons/fa";
@@ -194,40 +195,11 @@ export default function Hero() {
                 Contact
               </Link>
             </div>
-
-
           </div>
 
-          {/* Right: avatar placeholder */}
-          <div className="hero-avatar" aria-hidden="true">
-            <div
-              style={{
-                width: "220px",
-                height: "220px",
-                borderRadius: "50%",
-                border: "2px solid var(--border)",
-                background: "var(--bg-card)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "5rem",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              {/* Subtle glow ring */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: "-4px",
-                  borderRadius: "50%",
-                  background: "var(--gradient-hero)",
-                  opacity: 0.2,
-                  zIndex: -1,
-                }}
-              />
-              🧑‍💻
-            </div>
+          {/* Right: profile photo */}
+          <div className="hero-avatar">
+            <ProfileAvatar />
           </div>
         </div>
       </div>
@@ -241,6 +213,69 @@ export default function Hero() {
     </section>
   );
 }
+
+// ─── Profile Avatar ────────────────────────────────────────────────────────────
+// Drop your photo at:  public/images/profile.jpg
+// It will appear here automatically. Falls back to an emoji if missing.
+
+function ProfileAvatar() {
+  const [error, setError] = useState(false);
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: "220px",
+        height: "220px",
+        flexShrink: 0,
+      }}
+    >
+      {/* Gradient glow ring */}
+      <div
+        style={{
+          position: "absolute",
+          inset: "-3px",
+          borderRadius: "50%",
+          background: "var(--gradient-hero)",
+          opacity: 0.25,
+          zIndex: 0,
+        }}
+      />
+      {/* Photo circle */}
+      <div
+        style={{
+          position: "relative",
+          width: "220px",
+          height: "220px",
+          borderRadius: "50%",
+          overflow: "hidden",
+          border: "2px solid var(--border)",
+          background: "var(--bg-card)",
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "5rem",
+        }}
+      >
+        {!error ? (
+          <Image
+            src="/images/profile.png"
+            alt="Asif Mahmud"
+            fill
+            style={{ objectFit: "cover" }}
+            onError={() => setError(true)}
+            priority
+          />
+        ) : (
+          "🧑‍💻"
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Button styles ─────────────────────────────────────────────────────────────
 
 const primaryBtnStyle: React.CSSProperties = {
   display: "inline-flex",
