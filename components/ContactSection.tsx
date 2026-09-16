@@ -225,7 +225,7 @@ export default function ContactSection() {
                     height: "42px",
                     borderRadius: "8px",
                     background: "var(--accent-glow)",
-                    border: "1px solid rgba(79,156,249,0.2)",
+                    border: "1px solid rgba(91,138,245,0.2)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

@@ -168,7 +168,6 @@ export default function Footer() {
             </ul>
           </nav>
 
-          {/* Copyright */}
           <p
             style={{
               fontSize: "0.8125rem",
@@ -176,10 +175,7 @@ export default function Footer() {
               lineHeight: 1.5,
             }}
           >
-            © {year} Asif Mahmud · Built with{" "}
-            <span style={{ color: "var(--text-secondary)" }}>Next.js</span>,{" "}
-            <span style={{ color: "var(--text-secondary)" }}>Tailwind CSS</span> &{" "}
-            <span style={{ color: "var(--text-secondary)" }}>TypeScript</span>
+            © {year} Asif Mahmud
           </p>
         </div>
       </div>

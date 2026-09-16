@@ -135,7 +135,7 @@ export default function Navbar() {
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
-            className="md:hidden"
+            className="md:hidden flex items-center justify-center"
             style={{
               background: "none",
               border: "none",
@@ -143,9 +143,6 @@ export default function Navbar() {
               color: "var(--text-secondary)",
               padding: "0.5rem",
               borderRadius: "6px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
             }}
           >
             {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -158,6 +155,8 @@ export default function Navbar() {
             style={{
               borderTop: "1px solid var(--border)",
               paddingBottom: "1rem",
+              background: "var(--bg-primary)",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
             }}
           >
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>

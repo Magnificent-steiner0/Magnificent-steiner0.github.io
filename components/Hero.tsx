@@ -120,10 +120,11 @@ export default function Hero() {
                 maxWidth: "560px",
               }}
             >
-              AI Engineer focused on medical imaging, NLP, and full-stack systems.
-              Recently graduated with a BSc in CSE from KUET. I build intelligent
-              systems that solve real-world problems — from brain CT classifiers
-              to AI-powered chatbots.
+              AI Engineer with hands-on experience building intelligent
+              applications using LLMs, RAG pipelines, and modern full-stack
+              technologies. I design and ship production-ready systems — from
+              AI-powered customer support bots to recommendation engines —
+              using FastAPI, Next.js, and vector databases.
             </p>
 
             {/* CTA Buttons */}
@@ -194,38 +195,7 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* Stats row */}
-            <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-              {[
-                { value: "5+", label: "Projects" },
-                { value: "859", label: "CT Scans Trained" },
-                { value: "2026", label: "BSc CSE" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <p
-                    style={{
-                      fontSize: "1.5rem",
-                      fontWeight: 800,
-                      color: "var(--accent)",
-                      lineHeight: 1,
-                      marginBottom: "0.25rem",
-                    }}
-                  >
-                    {stat.value}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "var(--text-muted)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                    }}
-                  >
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
+
           </div>
 
           {/* Right: avatar placeholder */}
