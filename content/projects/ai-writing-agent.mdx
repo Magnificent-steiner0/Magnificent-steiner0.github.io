@@ -1,0 +1,36 @@
+---
+title: "AI Writing Agent"
+slug: "ai-writing-agent"
+description: "A modular writing assistant powered by LangChain and GPT-4o-mini with specialized tools for grammar, style, simplification, and content completion."
+overview: "A smart writing assistant built with LangChain's agent framework, offering a suite of specialized writing tools. The OpenAI Functions agent intelligently selects the right tool for each user request, while conversation memory ensures contextually aware suggestions."
+problemStatement: "Generic LLM chat interfaces lack the structure needed for reliable writing assistance. A tool-based agent approach enables precise, auditable actions (grammar fix, formal rewrite, etc.) rather than unpredictable open-ended generation."
+featured: false
+githubUrl: ""
+liveUrl: ""
+techStack: ["Python", "LangChain", "GPT-4o-mini", "OpenAI Functions"]
+tags: ["AI", "LLMs"]
+coverImage: "/images/projects/writing-agent/placeholder-1.svg"
+screenshots:
+  - "/images/projects/writing-agent/placeholder-1.svg"
+  - "/images/projects/writing-agent/placeholder-2.svg"
+  - "/images/projects/writing-agent/placeholder-3.svg"
+architecture:
+  - "LangChain OpenAI Functions agent as the orchestration layer"
+  - "Grammar correction tool for fixing language errors"
+  - "Formal rewriting tool for professional tone conversion"
+  - "Sentence simplification tool for complex text"
+  - "Article completion tool for continuing partial content"
+  - "Conversation memory for multi-turn context"
+challenges:
+  - "Ensuring the agent selects the right tool consistently"
+  - "Maintaining coherent context across multi-turn conversations"
+  - "Preventing over-generation that drifts from user intent"
+solutions:
+  - "Carefully designed tool descriptions to guide agent tool selection"
+  - "ConversationBufferMemory for persistent context within a session"
+  - "Temperature tuning per tool (lower for grammar, higher for completion)"
+lessonsLearned:
+  - "Tool descriptions are the most impactful lever for agent reliability"
+  - "OpenAI Functions calling is more reliable than ReAct-style agents for structured tasks"
+  - "Memory management is critical — long contexts degrade performance"
+---

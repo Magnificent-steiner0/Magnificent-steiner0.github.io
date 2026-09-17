@@ -8,8 +8,8 @@ import SkillSection from "@/components/SkillSection";
 import EducationSection from "@/components/EducationSection";
 import ContactSection from "@/components/ContactSection";
 import SectionHeading from "@/components/SectionHeading";
-import { featuredProjects } from "@/data/projects";
-import { getRecentBlogs } from "@/data/blog";
+import { getFeaturedProjects } from "@/lib/content";
+import { getRecentBlogs } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Asif Mahmud — AI Engineer & Full Stack Developer",
@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   const recentBlogs = getRecentBlogs(4);
+  const featuredProjects = getFeaturedProjects();
 
   return (
     <>
@@ -67,7 +68,7 @@ export default function Home() {
             }}
           >
             {featuredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <ProjectCard key={project.slug} project={project} />
             ))}
           </div>
 

@@ -1,0 +1,36 @@
+---
+title: "Brain CT Scan Classifier"
+slug: "brain-ct-classifier"
+description: "Multi-label classification system for brain CT scans using ConvNeXt-V2 and Multiple Instance Learning with a dual-head architecture."
+overview: "A deep learning system for classifying brain CT scans into multiple pathology and anatomical location categories. Built as an undergraduate thesis project using real clinical data from 859 patients. The system uses Multiple Instance Learning to identify which slices in a CT volume are diagnostically relevant, and a dual-head architecture to simultaneously predict pathology type and anatomical location."
+problemStatement: "Manual reading of brain CT scans is time-consuming and error-prone. Radiologists must review dozens of slices per scan to detect subtle pathologies. Automated classification can assist radiologists in faster, more consistent diagnosis — particularly in resource-limited settings."
+featured: true
+githubUrl: ""
+liveUrl: ""
+techStack: ["Python", "PyTorch", "ConvNeXt-V2", "MIL", "NumPy", "scikit-learn"]
+tags: ["AI", "Computer Vision", "Research"]
+coverImage: "/images/projects/brain-ct/placeholder-1.svg"
+screenshots:
+  - "/images/projects/brain-ct/placeholder-1.svg"
+  - "/images/projects/brain-ct/placeholder-2.svg"
+  - "/images/projects/brain-ct/placeholder-3.svg"
+architecture:
+  - "ConvNeXt-V2 Tiny as the image encoder for feature extraction from CT slices"
+  - "Multiple Instance Learning (MIL) with attention mechanism to identify diagnostically relevant slices"
+  - "Dual-head architecture: one head for pathology classification, one for anatomical location"
+  - "Trained on 859 real patient CT scans with multi-label annotations"
+challenges:
+  - "Limited dataset size (859 patients) for a complex multi-label task"
+  - "Severe class imbalance across pathology categories"
+  - "Multi-label nature of diagnoses — a single scan can have multiple findings"
+  - "High intra-class variability in CT appearance"
+solutions:
+  - "Advanced loss functions (asymmetric loss) to handle class imbalance"
+  - "MIL attention mechanism to focus learning on relevant slices without slice-level labels"
+  - "Taxonomy-based label mapping to unify disparate clinical findings into structured categories"
+  - "Data augmentation tailored for medical imaging"
+lessonsLearned:
+  - "MIL is highly effective when only bag-level (patient-level) labels are available"
+  - "Encoder pretraining quality has an outsized impact on downstream performance"
+  - "Clinical domain knowledge is essential for meaningful label design"
+---

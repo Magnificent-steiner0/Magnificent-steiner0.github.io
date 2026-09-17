@@ -1,34 +1,36 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink, ArrowLeft, Tag } from "lucide-react";
+import { ExternalLink, ArrowLeft } from "lucide-react";
 import { FaGithub as Github } from "react-icons/fa";
-import { projects } from "@/data/projects";
+import { getAllProjects, getProjectBySlug } from "@/lib/content";
+import type { Project } from "@/lib/types";
 
 export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+  return getAllProjects().map((p: Project) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata(props: PageProps<"/projects/[slug]">) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = getProjectBySlug(slug);
   if (!project) return {};
   return {
-    title: project.title,
+    title: `${project.title} — Asif Mahmud`,
     description: project.description,
   };
 }
 
-export default async function ProjectDetailPage(props: PageProps<"/projects/[slug]">) {
+export default async function ProjectDetailPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = getProjectBySlug(slug);
 
   if (!project) notFound();
 
-  const related = projects
+  const allProjects: Project[] = getAllProjects();
+  const related = allProjects
     .filter(
-      (p) =>
+      (p: Project) =>
         p.slug !== project.slug &&
-        p.tags.some((t) => project.tags.includes(t))
+        p.tags.some((t: string) => project.tags.includes(t))
     )
     .slice(0, 3);
 
@@ -60,7 +62,7 @@ export default async function ProjectDetailPage(props: PageProps<"/projects/[slu
           </Link>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.25rem" }}>
-            {project.tags.map((tag) => (
+            {project.tags.map((tag: string) => (
               <span
                 key={tag}
                 style={{
@@ -239,7 +241,7 @@ export default async function ProjectDetailPage(props: PageProps<"/projects/[slu
                 Tech Stack
               </h3>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                {project.techStack.map((tech) => (
+                {project.techStack.map((tech: string) => (
                   <span key={tech} className="pill">{tech}</span>
                 ))}
               </div>
@@ -251,7 +253,7 @@ export default async function ProjectDetailPage(props: PageProps<"/projects/[slu
                 Categories
               </h3>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                {project.tags.map((tag) => (
+                {project.tags.map((tag: string) => (
                   <span key={tag} style={{ fontSize: "0.75rem", padding: "0.25rem 0.625rem", borderRadius: "9999px", background: "rgba(167,139,250,0.1)", color: "var(--accent-2)", border: "1px solid rgba(167,139,250,0.2)", fontWeight: 500 }}>
                     {tag}
                   </span>
@@ -268,7 +270,7 @@ export default async function ProjectDetailPage(props: PageProps<"/projects/[slu
               Related Projects
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
-              {related.map((p) => (
+              {related.map((p: Project) => (
                 <Link
                   key={p.slug}
                   href={`/projects/${p.slug}`}

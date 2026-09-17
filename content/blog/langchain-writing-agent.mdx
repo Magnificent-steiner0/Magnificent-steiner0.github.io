@@ -1,0 +1,84 @@
+---
+title: "LangChain Agents: Building a Modular AI Writing Assistant"
+date: "2026-05-20"
+readingTime: "7 min read"
+tags: ["LLMs", "LangChain", "Agents"]
+coverImage: "/images/blog/langchain-cover.svg"
+excerpt: "How I used LangChain's OpenAI Functions agent with custom tools to build a context-aware writing assistant. Covers tool design, memory integration, and agent orchestration."
+---
+
+## Why an Agent Instead of a Simple Prompt?
+
+A single prompt like "Fix this text" is ambiguous. Does the user want grammar correction, tone adjustment, or simplification? An **agent with specialized tools** can make that decision systematically — and be auditable about it.
+
+## Defining the Tools
+
+```python
+from langchain.tools import tool
+
+@tool
+def correct_grammar(text: str) -> str:
+    """Corrects grammatical errors in the given text. Use when the user wants grammar fixed."""
+    response = llm.invoke(
+        f"Fix all grammatical errors in this text. Return only the corrected text:\n\n{text}"
+    )
+    return response.content
+
+@tool
+def rewrite_formally(text: str) -> str:
+    """Rewrites text in a formal, professional tone. Use when the user wants formal language."""
+    response = llm.invoke(
+        f"Rewrite this in formal, professional English:\n\n{text}"
+    )
+    return response.content
+
+@tool
+def simplify_sentence(text: str) -> str:
+    """Simplifies complex sentences for easier reading. Use when text is too complex."""
+    response = llm.invoke(
+        f"Simplify this text so it's easy to understand. Keep the meaning:\n\n{text}"
+    )
+    return response.content
+
+@tool
+def complete_article(partial_text: str) -> str:
+    """Continues and completes an unfinished article or paragraph."""
+    response = llm.invoke(
+        f"Continue and complete this article naturally:\n\n{partial_text}"
+    )
+    return response.content
+```
+
+## The Agent with Memory
+
+```python
+from langchain.agents import create_openai_functions_agent, AgentExecutor
+from langchain.memory import ConversationBufferMemory
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+tools = [correct_grammar, rewrite_formally, simplify_sentence, complete_article]
+
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+agent = create_openai_functions_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
+```
+
+## Key Design Lessons
+
+**Tool descriptions are everything.** The agent picks tools based on their docstrings. Vague descriptions = wrong tool selection. I rewrote tool descriptions 4 times before getting consistent behavior.
+
+**Temperature matters per-task:**
+- Grammar: `temperature=0.1` (deterministic, rule-based)
+- Completion: `temperature=0.7` (creative)
+- Formal rewrite: `temperature=0.2` (precise but not robotic)
+
+**Memory has a cost.** Conversation history grows the context, increasing latency and cost. For long sessions, sliding window memory (keep last N exchanges) is more practical than buffering everything.
+
+## Observations
+
+OpenAI Functions calling is significantly more reliable than ReAct-style agents for structured tool use. When the tool boundaries are clear and the descriptions are precise, the agent rarely makes wrong tool choices.

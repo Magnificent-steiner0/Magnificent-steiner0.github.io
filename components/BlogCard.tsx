@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
-import type { BlogPost } from "@/data/blog";
+import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
+import type { BlogPost } from "@/lib/types";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -35,9 +35,42 @@ export default function BlogCard({ post }: BlogCardProps) {
             alignItems: "center",
             justifyContent: "center",
             fontSize: "3rem",
+            position: "relative",
           }}
         >
           {coverEmoji(post.slug)}
+
+          {/* Series badge */}
+          {post.series && (
+            <span
+              style={{
+                position: "absolute",
+                top: "0.75rem",
+                right: "0.75rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.3rem",
+                fontSize: "0.625rem",
+                fontWeight: 600,
+                padding: "0.25rem 0.625rem",
+                borderRadius: "9999px",
+                background: "rgba(79, 156, 249, 0.2)",
+                color: "var(--accent)",
+                border: "1px solid rgba(79, 156, 249, 0.3)",
+                backdropFilter: "blur(8px)",
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+              }}
+            >
+              <BookOpen size={10} />
+              {post.series}
+              {post.seriesOrder !== undefined && (
+                <span style={{ opacity: 0.7 }}>
+                  · Pt. {post.seriesOrder}
+                </span>
+              )}
+            </span>
+          )}
         </div>
       </Link>
 

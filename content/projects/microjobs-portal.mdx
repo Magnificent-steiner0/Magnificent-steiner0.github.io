@@ -1,0 +1,34 @@
+---
+title: "Microjobs Portal"
+slug: "microjobs-portal"
+description: "A local part-time job board with an AI-powered recommendation system using TF-IDF and FAISS for fast similarity search."
+overview: "A full-stack job portal targeting local micro and part-time jobs, with an intelligent recommendation engine that matches users with relevant job listings based on their skills and interaction history."
+problemStatement: "Existing job platforms are optimized for full-time, large-company listings. Local micro-job seekers struggle to find relevant opportunities efficiently. A tailored portal with smart recommendations can dramatically improve match quality and time-to-hire."
+featured: true
+githubUrl: ""
+liveUrl: ""
+techStack: ["Next.js", "Tailwind CSS", "Shadcn UI", "Python", "TF-IDF", "FAISS"]
+tags: ["Full Stack", "AI"]
+coverImage: "/images/projects/microjobs/placeholder-1.svg"
+screenshots:
+  - "/images/projects/microjobs/placeholder-1.svg"
+  - "/images/projects/microjobs/placeholder-2.svg"
+  - "/images/projects/microjobs/placeholder-3.svg"
+architecture:
+  - "Frontend: Next.js with Tailwind CSS and Shadcn UI components"
+  - "TF-IDF vectorization for job description representation"
+  - "FAISS index for approximate nearest-neighbor similarity search"
+  - "Recommendation engine combining content-based and interaction-based signals"
+challenges:
+  - "Cold start problem for new users with no interaction history"
+  - "Efficiently searching across a growing job listing database"
+  - "Balancing relevance vs. recency in recommendations"
+solutions:
+  - "Content-based fallback using TF-IDF cosine similarity for cold-start users"
+  - "FAISS for sub-millisecond similarity search at scale"
+  - "Configurable sort: relevance score or geographic proximity"
+lessonsLearned:
+  - "FAISS dramatically outperforms brute-force cosine similarity at scale"
+  - "Shadcn UI accelerates building accessible, polished components"
+  - "Good data preprocessing is 80% of recommendation quality"
+---

@@ -1,0 +1,35 @@
+---
+title: "AI Customer Support Chatbot"
+slug: "ai-customer-support-chatbot"
+description: "RAG-based chatbot that resolves customer complaints by retrieving similar past cases and generating responses with a local LLM."
+overview: "A customer support chatbot powered by Retrieval-Augmented Generation (RAG). The system embeds historical complaint-solution pairs into a vector database and retrieves the most similar past cases to inform LLM-generated responses — all running locally without cloud API costs."
+problemStatement: "Traditional rule-based chatbots fail to handle the natural language variability of real customer complaints. Large cloud LLMs are expensive and raise privacy concerns for sensitive support data. A local RAG pipeline offers the best of both worlds."
+featured: true
+githubUrl: ""
+liveUrl: ""
+techStack: ["FastAPI", "PostgreSQL", "pgvector", "Ollama", "Sentence-Transformers", "Python"]
+tags: ["AI", "LLMs", "Full Stack"]
+coverImage: "/images/projects/chatbot/placeholder-1.svg"
+screenshots:
+  - "/images/projects/chatbot/placeholder-1.svg"
+  - "/images/projects/chatbot/placeholder-2.svg"
+  - "/images/projects/chatbot/placeholder-3.svg"
+architecture:
+  - "FastAPI backend for REST API endpoints"
+  - "PostgreSQL with pgvector extension for vector similarity search"
+  - "Sentence-transformers for generating high-quality text embeddings"
+  - "Ollama running the 'phi' model locally for response generation"
+  - "RAG pipeline: embed query → retrieve top-k similar past issues → generate response"
+challenges:
+  - "Running a capable LLM locally with acceptable latency"
+  - "Storing and querying vector embeddings efficiently in PostgreSQL"
+  - "Designing prompts that ground the LLM to retrieved context"
+solutions:
+  - "Used Ollama with the phi model — fast and lightweight for local inference"
+  - "pgvector enables native vector search without a separate vector database"
+  - "Carefully engineered system prompts to prevent hallucination"
+lessonsLearned:
+  - "RAG is highly effective for domain-specific, knowledge-grounded chatbots"
+  - "pgvector is a great choice when you already have PostgreSQL in your stack"
+  - "Local LLMs like phi are surprisingly capable for structured support tasks"
+---

@@ -1,16 +1,18 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react";
-import { blogPosts } from "@/data/blog";
+import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { getAllBlogPosts, getBlogBySlug, getSeriesForPost } from "@/lib/content";
+import type { BlogPost } from "@/lib/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import SeriesNav from "@/components/SeriesNav";
 
 export function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  return getAllBlogPosts().map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = getBlogBySlug(slug);
   if (!post) return {};
   return {
     title: `${post.title} — Asif Mahmud`,
@@ -20,7 +22,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function BlogDetailPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = getBlogBySlug(slug);
 
   if (!post) notFound();
 
@@ -29,6 +31,8 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
     month: "long",
     day: "numeric",
   });
+
+  const seriesInfo = getSeriesForPost(post);
 
   // Basic styling for the MDX content without Tailwind Typography
   const components = {
@@ -130,7 +134,7 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
           </Link>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.5rem" }}>
-            {post.tags.map((tag) => (
+            {post.tags.map((tag: string) => (
               <span
                 key={tag}
                 style={{
@@ -210,7 +214,33 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
           }}
           className="mdx-content"
         >
+          {/* Series navigation */}
+          {seriesInfo && (
+            <SeriesNav
+              seriesName={seriesInfo.series.name}
+              posts={seriesInfo.series.posts.map((p: BlogPost) => ({
+                slug: p.slug,
+                title: p.title,
+              }))}
+              currentIndex={seriesInfo.currentIndex}
+            />
+          )}
+
           <MDXRemote source={post.content} components={components} />
+
+          {/* Bottom series navigation */}
+          {seriesInfo && (
+            <div style={{ marginTop: "3rem" }}>
+              <SeriesNav
+                seriesName={seriesInfo.series.name}
+                posts={seriesInfo.series.posts.map((p: BlogPost) => ({
+                  slug: p.slug,
+                  title: p.title,
+                }))}
+                currentIndex={seriesInfo.currentIndex}
+              />
+            </div>
+          )}
         </article>
       </div>
 

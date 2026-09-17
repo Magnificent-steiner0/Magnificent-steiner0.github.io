@@ -1,0 +1,35 @@
+---
+title: "Snake Maramari — Multi-Snake AI Battle"
+slug: "snake-maramari"
+description: "A competitive snake game in Python and Pygame where up to 4 AI snakes with different algorithms fight for survival and steal scores."
+overview: "A competitive multi-agent snake game where autonomous AI snakes battle on the same board. Each snake runs a different algorithmic brain, and the game ends when only one snake remains. The score-stealing mechanic creates intense competitive dynamics."
+problemStatement: "Classic snake games are single-player and deterministic. A multi-agent setting where different AI strategies compete reveals the strengths and weaknesses of each algorithm in a dynamic, adversarial environment."
+featured: true
+githubUrl: ""
+liveUrl: ""
+techStack: ["Python", "Pygame", "A*", "Minimax", "Greedy"]
+tags: ["AI", "Research"]
+coverImage: "/images/projects/snake/placeholder-1.svg"
+screenshots:
+  - "/images/projects/snake/placeholder-1.svg"
+  - "/images/projects/snake/placeholder-2.svg"
+  - "/images/projects/snake/placeholder-3.svg"
+architecture:
+  - "Pygame for game loop, rendering, and event handling"
+  - "A* pathfinding for one AI agent (optimal path to food)"
+  - "Minimax algorithm for another agent (adversarial strategy)"
+  - "Greedy algorithm for another agent (myopic food-seeking)"
+  - "Collision detection and score-stealing mechanics"
+challenges:
+  - "Handling real-time pathfinding for multiple agents simultaneously"
+  - "Balancing algorithm complexity vs. frame rate"
+  - "Designing fair starting conditions for agents with different strategies"
+solutions:
+  - "Optimized A* with early termination for real-time performance"
+  - "Depth-limited Minimax to keep computation per frame bounded"
+  - "Randomized starting positions and food spawns for fairness"
+lessonsLearned:
+  - "A* dominates in open boards; Minimax excels in tight, adversarial spaces"
+  - "Game state representation design is critical for AI performance"
+  - "Multi-agent systems expose emergent behaviors not visible in single-agent settings"
+---

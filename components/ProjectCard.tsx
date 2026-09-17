@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { FaGithub as Github } from "react-icons/fa";
-import type { Project } from "@/data/projects";
+import type { Project } from "@/lib/types";
 
 interface ProjectCardProps {
   project: Project;

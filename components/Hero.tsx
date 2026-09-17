@@ -112,21 +112,25 @@ export default function Hero() {
             </p>
 
             {/* Bio */}
-            <p
+            <div
               style={{
                 fontSize: "1.0625rem",
                 color: "var(--text-secondary)",
                 lineHeight: 1.75,
                 marginBottom: "2.5rem",
-                maxWidth: "560px",
+                maxWidth: "580px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
               }}
             >
-              AI Engineer with hands-on experience building intelligent
-              applications using LLMs, RAG pipelines, and modern full-stack
-              technologies. I design and ship production-ready systems — from
-              AI-powered customer support bots to recommendation engines —
-              using FastAPI, Next.js, and vector databases.
-            </p>
+              <p>
+                I&apos;m an AI Engineer and Full-Stack Developer with a background in Computer Science and Engineering. I build practical applications using AI, LLMs, agentic systems, machine learning, and modern web technologies.
+              </p>
+              <p>
+                I&apos;m particularly interested in turning emerging AI techniques into reliable, scalable, and useful software.
+              </p>
+            </div>
 
             {/* CTA Buttons */}
             <div

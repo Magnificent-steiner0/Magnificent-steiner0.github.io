@@ -1,0 +1,110 @@
+---
+title: "RAG from Scratch: Building an AI Customer Support Bot"
+date: "2026-06-28"
+readingTime: "6 min read"
+tags: ["LLMs", "RAG", "FastAPI"]
+coverImage: "/images/blog/rag-cover.svg"
+excerpt: "A walkthrough of building a production-ready RAG pipeline with FastAPI, pgvector, sentence-transformers, and a local LLM — no cloud API costs required."
+---
+
+## The Problem with Generic Chatbots
+
+Most customer support chatbots are either too rigid (rule-based) or too unpredictable (raw LLM). The sweet spot is **Retrieval-Augmented Generation (RAG)** — ground the LLM's responses in your actual historical data.
+
+This post documents how I built a complete RAG pipeline using only local infrastructure.
+
+## Architecture at a Glance
+
+```
+User message
+    │
+    ▼
+Sentence-Transformer embedding
+    │
+    ▼
+pgvector similarity search (top-3 similar past cases)
+    │
+    ▼
+Context injection into prompt
+    │
+    ▼
+Ollama (phi model) → Response
+```
+
+## Setting Up pgvector
+
+pgvector is a PostgreSQL extension that adds a `vector` column type and similarity search operators. Setup is simple:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE support_cases (
+    id SERIAL PRIMARY KEY,
+    complaint TEXT NOT NULL,
+    solution TEXT NOT NULL,
+    embedding vector(384)
+);
+
+CREATE INDEX ON support_cases
+USING ivfflat (embedding vector_cosine_ops)
+WITH (lists = 100);
+```
+
+## Generating Embeddings
+
+```python
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+def embed(text: str) -> list[float]:
+    return model.encode(text).tolist()
+```
+
+For our use case, `all-MiniLM-L6-v2` (384 dimensions) gives an excellent balance of speed and semantic quality.
+
+## The FastAPI Endpoint
+
+```python
+@app.post("/chat")
+async def chat(request: ChatRequest, db: Session = Depends(get_db)):
+    query_embedding = embed(request.message)
+
+    # Retrieve top-3 similar cases
+    similar_cases = db.execute(
+        text("""
+            SELECT complaint, solution,
+                   1 - (embedding <=> :emb) AS similarity
+            FROM support_cases
+            ORDER BY embedding <=> :emb
+            LIMIT 3
+        """),
+        {"emb": query_embedding}
+    ).fetchall()
+
+    context = "\n\n".join(
+        f"Case: {c.complaint}\nSolution: {c.solution}"
+        for c in similar_cases
+    )
+
+    prompt = f"""You are a helpful support agent.
+Use these past cases to answer the new complaint.
+
+Past Cases:
+{context}
+
+New Complaint: {request.message}
+
+Provide a clear, helpful response:"""
+
+    response = ollama.chat(model="phi", messages=[
+        {"role": "user", "content": prompt}
+    ])
+    return {"response": response["message"]["content"]}
+```
+
+## Key Takeaways
+
+- pgvector eliminates the need for a separate vector database if you already use PostgreSQL
+- Local LLMs (phi via Ollama) are surprisingly capable for structured support tasks
+- Prompt engineering matters more than model choice for RAG quality
