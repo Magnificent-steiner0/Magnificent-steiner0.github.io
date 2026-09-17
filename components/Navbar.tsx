@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import CommandPalette from "@/components/CommandPalette";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -91,79 +92,86 @@ export default function Navbar() {
             Asif<span style={{ color: "var(--accent)" }}>.</span>
           </Link>
 
-          {/* Desktop nav links — hidden on mobile */}
+          {/* Desktop nav links + search */}
           {!isMobile && (
-            <ul
-              style={{
-                display: "flex",
-                gap: "0.25rem",
-                listStyle: "none",
-                margin: 0,
-                padding: 0,
-              }}
-            >
-              {navLinks.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(link.href);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      style={{
-                        display: "block",
-                        padding: "0.375rem 0.875rem",
-                        borderRadius: "6px",
-                        fontSize: "0.875rem",
-                        fontWeight: isActive ? 600 : 400,
-                        color: isActive ? "var(--accent)" : "var(--text-secondary)",
-                        textDecoration: "none",
-                        transition: "color 0.2s ease, background 0.2s ease",
-                        background: isActive ? "rgba(79, 156, 249, 0.08)" : "transparent",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive) {
-                          (e.target as HTMLElement).style.color = "var(--text-primary)";
-                          (e.target as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) {
-                          (e.target as HTMLElement).style.color = "var(--text-secondary)";
-                          (e.target as HTMLElement).style.background = "transparent";
-                        }
-                      }}
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <ul
+                style={{
+                  display: "flex",
+                  gap: "0.25rem",
+                  listStyle: "none",
+                  margin: 0,
+                  padding: 0,
+                }}
+              >
+                {navLinks.map((link) => {
+                  const isActive =
+                    link.href === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(link.href);
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        style={{
+                          display: "block",
+                          padding: "0.375rem 0.875rem",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: isActive ? 600 : 400,
+                          color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                          textDecoration: "none",
+                          transition: "color 0.2s ease, background 0.2s ease",
+                          background: isActive ? "rgba(56, 189, 248, 0.08)" : "transparent",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isActive) {
+                            (e.target as HTMLElement).style.color = "var(--text-primary)";
+                            (e.target as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isActive) {
+                            (e.target as HTMLElement).style.color = "var(--text-secondary)";
+                            (e.target as HTMLElement).style.background = "transparent";
+                          }
+                        }}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <CommandPalette />
+            </div>
           )}
 
-          {/* Hamburger button — only on mobile */}
+          {/* Mobile buttons: search + hamburger */}
           {isMobile && (
-            <button
-              onClick={() => setIsOpen((prev) => !prev)}
-              aria-label={isOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isOpen}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text-secondary)",
-                padding: "0.5rem",
-                borderRadius: "6px",
-              }}
-            >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <CommandPalette />
+              <button
+                onClick={() => setIsOpen((prev) => !prev)}
+                aria-label={isOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isOpen}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--text-secondary)",
+                  padding: "0.5rem",
+                  borderRadius: "6px",
+                }}
+              >
+                {isOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
           )}
         </nav>
 

@@ -3,11 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Download, ExternalLink, MapPin } from "lucide-react";
+import { Mail, Download, ExternalLink, MapPin, Copy, Check, Sparkles } from "lucide-react";
 import { FaLinkedin as Linkedin, FaGithub as Github } from "react-icons/fa";
 
 export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("asifmahmud0396@gmail.com");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2000);
+  };
 
   useEffect(() => {
     const el = titleRef.current;
@@ -64,22 +71,51 @@ export default function Hero() {
           {/* Left: content */}
           <div ref={titleRef} style={{ maxWidth: "680px" }}>
             {/* Location pill */}
+            {/* Status Beacon & Location */}
             <div
               style={{
-                display: "inline-flex",
+                display: "flex",
+                flexWrap: "wrap",
                 alignItems: "center",
-                gap: "0.375rem",
-                padding: "0.3rem 0.875rem",
-                borderRadius: "9999px",
-                border: "1px solid var(--border)",
-                background: "var(--bg-card)",
-                fontSize: "0.8125rem",
-                color: "var(--text-secondary)",
+                gap: "0.75rem",
                 marginBottom: "1.75rem",
               }}
             >
-              <MapPin size={12} style={{ color: "var(--accent)" }} />
-              Dhaka, Bangladesh
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.3rem 0.85rem",
+                  borderRadius: "9999px",
+                  background: "rgba(16, 185, 129, 0.08)",
+                  border: "1px solid rgba(16, 185, 129, 0.25)",
+                  fontSize: "0.8125rem",
+                  color: "var(--accent-emerald)",
+                  fontFamily: "var(--font-mono), monospace",
+                  fontWeight: 500,
+                }}
+              >
+                <span className="beacon-dot" />
+                Available for AI &amp; Full-Stack Roles
+              </div>
+
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                  padding: "0.3rem 0.85rem",
+                  borderRadius: "9999px",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-card)",
+                  fontSize: "0.8125rem",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                <MapPin size={12} style={{ color: "var(--accent)" }} />
+                Dhaka, Bangladesh
+              </div>
             </div>
 
             {/* Name */}
@@ -153,17 +189,27 @@ export default function Hero() {
                 <ExternalLink size={15} />
                 View Resume
               </a>
-              <a
-                href="/asifmahmud0396@gmail.com.pdf"
-                download
-                id="btn-download-resume"
-                style={outlineBtnStyle}
-                onMouseEnter={(e) => hoverOutline(e, true)}
-                onMouseLeave={(e) => hoverOutline(e, false)}
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                id="btn-copy-email"
+                style={{
+                  ...outlineBtnStyle,
+                  borderColor: copiedEmail ? "var(--accent-emerald)" : "var(--border)",
+                  color: copiedEmail ? "var(--accent-emerald)" : "var(--text-secondary)",
+                  background: copiedEmail ? "rgba(16, 185, 129, 0.08)" : "transparent",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (!copiedEmail) hoverOutline(e, true);
+                }}
+                onMouseLeave={(e) => {
+                  if (!copiedEmail) hoverOutline(e, false);
+                }}
               >
-                <Download size={15} />
-                Download
-              </a>
+                {copiedEmail ? <Check size={15} /> : <Copy size={15} />}
+                {copiedEmail ? "Email Copied!" : "Copy Email"}
+              </button>
               <a
                 href="https://github.com/Magnificent-steiner0"
                 target="_blank"

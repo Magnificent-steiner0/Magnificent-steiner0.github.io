@@ -88,18 +88,31 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           gap: "0.875rem",
         }}
       >
-        {/* Tags */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
-          {project.tags.map((tag) => (
+        {/* Tags & Metric */}
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.375rem" }}>
+          {project.slug === "brain-ct-classifier" && (
+            <span className="metric-badge">0.89 Mean AUC</span>
+          )}
+          {project.slug === "ai-customer-support-chatbot" && (
+            <span className="metric-badge">Local RAG • $0 Cost</span>
+          )}
+          {project.slug === "tfidf-faiss-recommendations" && (
+            <span className="metric-badge">~90x Speedup</span>
+          )}
+          {project.slug === "ai-writing-agent" && (
+            <span className="metric-badge">LangGraph 3-Agent</span>
+          )}
+          {project.tags.map((tag: string) => (
             <span
               key={tag}
               style={{
                 fontSize: "0.6875rem",
-                padding: "0.2rem 0.6rem",
-                borderRadius: "9999px",
-                background: "rgba(167, 139, 250, 0.1)",
-                color: "var(--accent-2)",
-                border: "1px solid rgba(167, 139, 250, 0.2)",
+                fontFamily: "var(--font-mono), monospace",
+                padding: "0.15rem 0.5rem",
+                borderRadius: "4px",
+                background: "rgba(255, 255, 255, 0.05)",
+                color: "var(--text-secondary)",
+                border: "1px solid var(--border)",
                 fontWeight: 500,
               }}
             >
