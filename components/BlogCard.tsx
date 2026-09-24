@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
@@ -9,15 +11,18 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post }: BlogCardProps) {
+  const [imgError, setImgError] = useState(false);
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
 
+  const hasCoverImage = Boolean(post.coverImage) && !imgError;
+
   return (
     <article
-      className="glass-card"
+      className="glass-card blog-card"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -25,20 +30,48 @@ export default function BlogCard({ post }: BlogCardProps) {
         overflow: "hidden",
       }}
     >
-      {/* Cover image placeholder */}
+      {/* Cover image area */}
       <Link href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
         <div
           style={{
-            height: "160px",
+            height: "180px",
+            position: "relative",
+            overflow: "hidden",
             background: coverGradient(post.slug),
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "3rem",
-            position: "relative",
           }}
         >
-          {coverEmoji(post.slug)}
+          {hasCoverImage ? (
+            <>
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                style={{
+                  objectFit: "cover",
+                  transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+                className="blog-card-img"
+                onError={() => setImgError(true)}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.6) 100%)",
+                  pointerEvents: "none",
+                }}
+              />
+            </>
+          ) : (
+            <span style={{ fontSize: "3.25rem", userSelect: "none" }}>
+              {coverEmoji(post.slug)}
+            </span>
+          )}
 
           {/* Series badge */}
           {post.series && (
@@ -54,12 +87,13 @@ export default function BlogCard({ post }: BlogCardProps) {
                 fontWeight: 600,
                 padding: "0.25rem 0.625rem",
                 borderRadius: "9999px",
-                background: "rgba(79, 156, 249, 0.2)",
+                background: "rgba(15, 23, 42, 0.75)",
                 color: "var(--accent)",
-                border: "1px solid rgba(79, 156, 249, 0.3)",
+                border: "1px solid rgba(79, 156, 249, 0.35)",
                 backdropFilter: "blur(8px)",
                 textTransform: "uppercase",
                 letterSpacing: "0.04em",
+                zIndex: 2,
               }}
             >
               <BookOpen size={10} />
@@ -188,6 +222,8 @@ export default function BlogCard({ post }: BlogCardProps) {
 
 function coverGradient(slug: string): string {
   const gradients: Record<string, string> = {
+    "what_is_mcp_and_why_do_we_need_it":
+      "linear-gradient(135deg, #091a28 0%, #102a45 50%, #1e3a5f 100%)",
     "brain-ct-classifier-mil":
       "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
     "rag-customer-support-bot":
@@ -202,6 +238,7 @@ function coverGradient(slug: string): string {
 
 function coverEmoji(slug: string): string {
   const emojis: Record<string, string> = {
+    "what_is_mcp_and_why_do_we_need_it": "🔌",
     "brain-ct-classifier-mil": "🧠",
     "rag-customer-support-bot": "🤖",
     "tfidf-faiss-recommendations": "🔍",

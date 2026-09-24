@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { getAllBlogPosts, getBlogBySlug, getSeriesForPost } from "@/lib/content";
 import type { BlogPost } from "@/lib/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import SeriesNav from "@/components/SeriesNav";
+import Mermaid from "@/components/Mermaid";
 
 export function generateStaticParams() {
   return getAllBlogPosts().map((p) => ({ slug: p.slug }));
@@ -34,7 +36,7 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
 
   const seriesInfo = getSeriesForPost(post);
 
-  // Basic styling for the MDX content without Tailwind Typography
+  // MDX content components
   const components = {
     h2: (props: any) => (
       <h2 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "2.5rem", marginBottom: "1rem" }} {...props} />
@@ -51,21 +53,40 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
     li: (props: any) => (
       <li style={{ fontSize: "1.0625rem", lineHeight: 1.7 }} {...props} />
     ),
-    pre: (props: any) => (
-      <pre
-        style={{
-          background: "var(--bg-card)",
-          border: "1px solid var(--border)",
-          padding: "1.25rem",
-          borderRadius: "8px",
-          overflowX: "auto",
-          marginBottom: "1.5rem",
-          fontSize: "0.875rem",
-          color: "var(--text-secondary)",
-        }}
-        {...props}
-      />
-    ),
+    pre: (props: any) => {
+      // Check if this pre wraps a mermaid code block
+      const child = props.children;
+      if (
+        child &&
+        typeof child === "object" &&
+        "props" in child &&
+        child.props?.className?.includes("language-mermaid")
+      ) {
+        const chartCode =
+          typeof child.props.children === "string"
+            ? child.props.children
+            : Array.isArray(child.props.children)
+            ? child.props.children.join("")
+            : String(child.props.children || "");
+        return <Mermaid chart={chartCode} />;
+      }
+
+      return (
+        <pre
+          style={{
+            background: "var(--bg-card)",
+            border: "1px solid var(--border)",
+            padding: "1.25rem",
+            borderRadius: "8px",
+            overflowX: "auto",
+            marginBottom: "1.5rem",
+            fontSize: "0.875rem",
+            color: "var(--text-secondary)",
+          }}
+          {...props}
+        />
+      );
+    },
     code: (props: any) => {
       // If it's inline code, apply slight background
       const isInline = !props.className;
@@ -87,6 +108,7 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
         />
       );
     },
+    Mermaid: (props: any) => <Mermaid {...props} />,
     a: (props: any) => (
       <a style={{ color: "var(--accent)", textDecoration: "none", borderBottom: "1px solid var(--accent)" }} {...props} />
     ),
@@ -116,6 +138,21 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
           overflow: "hidden",
         }}
       >
+        {post.coverImage && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url(${post.coverImage})`,
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+              filter: "blur(50px) brightness(0.2)",
+              transform: "scale(1.15)",
+              pointerEvents: "none",
+              zIndex: 0,
+            }}
+          />
+        )}
         <div className="container-pad" style={{ position: "relative", zIndex: 2 }}>
           <Link
             href="/blog"
@@ -226,6 +263,32 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
             />
           )}
 
+          {/* Featured Cover Image */}
+          {post.coverImage && (
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                aspectRatio: "16/9",
+                borderRadius: "14px",
+                overflow: "hidden",
+                marginBottom: "2.5rem",
+                border: "1px solid var(--border)",
+                boxShadow: "0 16px 40px -10px rgba(0, 0, 0, 0.6)",
+                background: "var(--bg-secondary)",
+              }}
+            >
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                priority
+                sizes="(max-width: 800px) 100vw, 750px"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+          )}
+
           <MDXRemote source={post.content} components={components} />
 
           {/* Bottom series navigation */}
@@ -271,6 +334,8 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
 
 function coverGradient(slug: string): string {
   const gradients: Record<string, string> = {
+    "what_is_mcp_and_why_do_we_need_it":
+      "linear-gradient(135deg, rgba(9, 26, 40, 0.95) 0%, rgba(16, 42, 69, 0.9) 50%, var(--bg-primary) 100%)",
     "brain-ct-classifier-mil":
       "linear-gradient(135deg, rgba(15,32,39,0.9) 0%, var(--bg-primary) 100%)",
     "rag-customer-support-bot":
@@ -285,6 +350,7 @@ function coverGradient(slug: string): string {
 
 function coverEmoji(slug: string): string {
   const emojis: Record<string, string> = {
+    "what_is_mcp_and_why_do_we_need_it": "🔌",
     "brain-ct-classifier-mil": "🧠",
     "rag-customer-support-bot": "🤖",
     "tfidf-faiss-recommendations": "🔍",

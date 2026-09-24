@@ -125,6 +125,10 @@ main {
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(56, 189, 248, 0.1);
 }
 
+.blog-card:hover .blog-card-img {
+  transform: scale(1.06);
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
