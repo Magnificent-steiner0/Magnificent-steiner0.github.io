@@ -7,6 +7,7 @@ import type { BlogPost } from "@/lib/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import SeriesNav from "@/components/SeriesNav";
 import Mermaid from "@/components/Mermaid";
+import remarkGfm from "remark-gfm";
 
 export function generateStaticParams() {
   return getAllBlogPosts().map((p) => ({ slug: p.slug }));
@@ -52,6 +53,63 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
     ),
     li: (props: any) => (
       <li style={{ fontSize: "1.0625rem", lineHeight: 1.7 }} {...props} />
+    ),
+    table: (props: any) => (
+      <div
+        style={{
+          width: "100%",
+          overflowX: "auto",
+          margin: "2rem 0",
+          borderRadius: "12px",
+          border: "1px solid var(--border)",
+          background: "rgba(15, 23, 42, 0.5)",
+          boxShadow: "0 8px 30px rgba(0, 0, 0, 0.25)",
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            textAlign: "left",
+            fontSize: "0.9375rem",
+          }}
+          {...props}
+        />
+      </div>
+    ),
+    thead: (props: any) => (
+      <thead
+        style={{
+          background: "rgba(30, 41, 59, 0.7)",
+          borderBottom: "2px solid var(--border)",
+        }}
+        {...props}
+      />
+    ),
+    th: ({ style, ...rest }: any) => (
+      <th
+        style={{
+          padding: "0.875rem 1.25rem",
+          fontWeight: 600,
+          color: "var(--text-primary)",
+          letterSpacing: "0.02em",
+          borderBottom: "1px solid var(--border)",
+          ...style,
+        }}
+        {...rest}
+      />
+    ),
+    td: ({ style, ...rest }: any) => (
+      <td
+        style={{
+          padding: "0.875rem 1.25rem",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.07)",
+          color: "var(--text-secondary)",
+          lineHeight: 1.6,
+          ...style,
+        }}
+        {...rest}
+      />
     ),
     pre: (props: any) => {
       // Check if this pre wraps a mermaid code block
@@ -289,7 +347,15 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
             </div>
           )}
 
-          <MDXRemote source={post.content} components={components} />
+          <MDXRemote
+            source={post.content}
+            components={components}
+            options={{
+              mdxOptions: {
+                remarkPlugins: [remarkGfm],
+              },
+            }}
+          />
 
           {/* Bottom series navigation */}
           {seriesInfo && (
@@ -312,16 +378,23 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
         .mdx-content table {
           width: 100%;
           border-collapse: collapse;
-          margin-bottom: 1.5rem;
-        }
-        .mdx-content th, .mdx-content td {
-          border: 1px solid var(--border);
-          padding: 0.75rem;
-          text-align: left;
+          margin-bottom: 2rem;
         }
         .mdx-content th {
-          background: rgba(255,255,255,0.05);
+          background: rgba(30, 41, 59, 0.7);
           color: var(--text-primary);
+          padding: 0.875rem 1.25rem;
+          font-weight: 600;
+          border-bottom: 2px solid var(--border);
+        }
+        .mdx-content td {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+          padding: 0.875rem 1.25rem;
+          color: var(--text-secondary);
+          line-height: 1.6;
+        }
+        .mdx-content tr:hover td {
+          background: rgba(255, 255, 255, 0.02);
         }
         .mdx-content strong {
           color: var(--text-primary);

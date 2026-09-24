@@ -63,10 +63,10 @@ flowchart LR
 
 If you have **N** AI applications and **M** external systems, you face up to **N × M** separate integration efforts. This model suffers from clear structural drawbacks:
 
-1. **Duplicated Engineering Effort:** Every engineering team writes custom wrapper code for the same API over and over again.
-2. **Brittle Codebases:** Whenever an external API updates, every AI application consuming that API directly must update its custom wrapper code.
-3. **Inconsistent Security & Auth:** Authentication tokens, user permissions, and scope checks are managed independently across every app, expanding the overall attack surface.
-4. **Non-reusable Context:** Tool definitions and contextual data prompts built for Application A cannot easily be reused inside Application B.
+- **Duplicated Engineering Effort:** Every engineering team writes custom wrapper code for the same API over and over again.
+- **Brittle Codebases:** Whenever an external API updates, every AI application consuming that API directly must update its custom wrapper code.
+- **Inconsistent Security & Auth:** Authentication tokens, user permissions, and scope checks are managed independently across every app, expanding the overall attack surface.
+- **Non-reusable Context:** Tool definitions and contextual data prompts built for Application A cannot easily be reused inside Application B.
 
 > **Key Question:** What if AI applications didn't need a custom, bespoke integration for every single service they wanted to use?
 
@@ -78,10 +78,10 @@ Connecting a traditional application to a REST API is a deterministic process: a
 
 AI systems operate differently. An LLM does not inherently know what APIs exist or when to call them. To enable an AI model to interact with external tools, your application must provide the model with structural metadata:
 
-1. **Discovery:** What capabilities exist right now?
-2. **Schema:** What parameter names and data types does a given tool accept?
-3. **Context:** What state or background documents are relevant to the user's prompt?
-4. **Invocation Format:** How must the model formulate its tool call response so the application can execute it?
+- **Discovery:** What capabilities exist right now?
+- **Schema:** What parameter names and data types does a given tool accept?
+- **Context:** What state or background documents are relevant to the user's prompt?
+- **Invocation Format:** How must the model formulate its tool call response so the application can execute it?
 
 Take a user request like: *"Find the latest issue assigned to me on GitHub."*
 
@@ -230,14 +230,14 @@ sequenceDiagram
 
 ### What Happens Step-by-Step?
 
-1. **User Request:** The user asks a question requiring external data.
-2. **Capability Discovery:** The AI Host asks its internal MCP Clients what capabilities are currently available from connected MCP Servers.
-3. **Schema Injection:** The MCP Client collects tool descriptions and parameter schemas from the servers and provides them to the LLM as available tools.
-4. **Model Decision:** The LLM decides it needs to invoke a specific tool (`search_issues`) and generates a structured request containing the appropriate parameters.
-5. **Execution Routing:** The AI Host routes this tool call through the MCP Client over the protocol to the corresponding MCP Server.
-6. **External Fetch:** The MCP Server translates the protocol call into actual API requests to GitHub, executes them, and receives the raw response.
-7. **Result Delivery:** The MCP Server wraps the results into standard MCP format and returns them to the client.
-8. **Final Synthesis:** The AI Host feeds the result back to the LLM, which formats the final natural language summary for the user.
+- **User Request:** The user asks a question requiring external data.
+- **Capability Discovery:** The AI Host asks its internal MCP Clients what capabilities are currently available from connected MCP Servers.
+- **Schema Injection:** The MCP Client collects tool descriptions and parameter schemas from the servers and provides them to the LLM as available tools.
+- **Model Decision:** The LLM decides it needs to invoke a specific tool (`search_issues`) and generates a structured request containing the appropriate parameters.
+- **Execution Routing:** The AI Host routes this tool call through the MCP Client over the protocol to the corresponding MCP Server.
+- **External Fetch:** The MCP Server translates the protocol call into actual API requests to GitHub, executes them, and receives the raw response.
+- **Result Delivery:** The MCP Server wraps the results into standard MCP format and returns them to the client.
+- **Final Synthesis:** The AI Host feeds the result back to the LLM, which formats the final natural language summary for the user.
 
 ---
 
@@ -294,10 +294,10 @@ flowchart TB
     Server <===> Ext
 ```
 
-1. **Host App:** Manages the LLM and decides *what* needs to be done.
-2. **MCP Client:** Handles the standard connection channel.
-3. **MCP Server:** Exposes the capabilities and handles *how* actions are executed.
-4. **External System:** Stores the raw data or executes the actual domain operation.
+- **Host App:** Manages the LLM and decides *what* needs to be done.
+- **MCP Client:** Handles the standard connection channel.
+- **MCP Server:** Exposes the capabilities and handles *how* actions are executed.
+- **External System:** Stores the raw data or executes the actual domain operation.
 
 ---
 
