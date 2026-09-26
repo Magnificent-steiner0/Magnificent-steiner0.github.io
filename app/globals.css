@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../content/blog";
+
 :root {
   /* Color palette — Obsidian Carbon & Technical Precision */
   --bg-primary: #07080b;
@@ -282,4 +284,22 @@ p code {
   animation: beacon-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
   display: inline-block;
   flex-shrink: 0;
+}
+
+.mdx-content ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mdx-content ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mdx-content li {
+  margin-bottom: 0.5rem;
 }

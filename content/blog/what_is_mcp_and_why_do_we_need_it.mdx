@@ -33,30 +33,33 @@ Without a standard protocol, every application re-implements its own integration
 
 ```mermaid
 flowchart LR
-    subgraph Apps ["🤖 AI Applications"]
-        AppA["AI Assistant A"]
-        AppB["IDE Plugin B"]
-        AppC["Workflow Agent C"]
+    classDef client fill:#1e293b,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc
+    classDef service fill:#1e1b4b,stroke:#a855f7,stroke-width:1.5px,color:#f8fafc
+
+    subgraph Clients ["AI Applications (N)"]
+        direction TB
+        App1["💬 Chat Assistant"]:::client
+        App2["💻 IDE Extension"]:::client
+        App3["⚙️ CI/CD Agent"]:::client
     end
 
-    subgraph Services ["🌐 External Services & Systems"]
-        GH[("GitHub API")]
-        SL[("Slack API")]
-        DB[("PostgreSQL")]
-        GD[("Google Drive")]
+    subgraph Services ["External Services (M)"]
+        direction TB
+        GH[("GitHub API")]:::service
+        SL[("Slack API")]:::service
+        DB[("Postgres DB")]:::service
+        GD[("Google Drive")]:::service
     end
 
-    AppA -->|Custom Code| GH
-    AppA -->|Custom Code| SL
-    AppA -->|Custom Code| DB
-
-    AppB -->|Custom Code| GH
-    AppB -->|Custom Code| SL
-    AppB -->|Custom Code| GD
-
-    AppC -->|Custom Code| GH
-    AppC -->|Custom Code| DB
-    AppC -->|Custom Code| GD
+    App1 -.->|Bespoke wrapper code| GH
+    App1 -.-> SL
+    App1 -.-> DB
+    App2 -.-> GH
+    App2 -.-> SL
+    App2 -.-> GD
+    App3 -.-> GH
+    App3 -.-> DB
+    App3 -.-> GD
 ```
 
 ### The N × M Integration Explosion
@@ -99,15 +102,24 @@ Rather than building custom bridges between every AI application and every datab
 
 ```mermaid
 flowchart LR
-    subgraph ClientHost ["AI Host & Client"]
-        Client["💻 AI Application<br/><b>(MCP Client)</b>"]
+    classDef client fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc
+    classDef protocol fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#e0e7ff
+    classDef server fill:#0f2422,stroke:#10b981,stroke-width:2px,color:#f8fafc
+
+    subgraph HostSide ["AI Application Layer"]
+        Client["💻 AI Host & Client<br/><small>(Claude, Cursor, Custom Agent)</small>"]:::client
     end
 
-    subgraph ServerSide ["Service Provider"]
-        Server["⚡ External Service<br/><b>(MCP Server)</b>"]
+    subgraph StandardLayer ["Universal Protocol Contract"]
+        Protocol["🔌 Model Context Protocol<br/><small>Tools • Resources • Prompts</small>"]:::protocol
     end
 
-    Client <===>|"🔌 Standardized MCP Protocol<br/>(Tools • Resources • Prompts)"| Server
+    subgraph ServiceSide ["Capability Provider Layer"]
+        Server["⚡ MCP Server<br/><small>(Exposes External APIs & DBs)</small>"]:::server
+    end
+
+    Client <===>|"JSON-RPC 2.0"| Protocol
+    Protocol <===>|"Standard Interface"| Server
 ```
 
 Conceptually, think of MCP as a standardized communication adapter. Instead of designing a custom electrical connection for every household device, power outlets adhere to a universal standard. MCP brings that same standard interface to the software layer between AI models and external capabilities.
@@ -122,28 +134,34 @@ MCP uses an explicit **Client-Server** model where responsibilities are separate
 
 ```mermaid
 flowchart TB
-    User([👤 User]) --> Host["🖥️ AI Host / Application<br/><small>(Claude, Cursor, Custom Agent)</small>"]
+    classDef user fill:#0f172a,stroke:#64748b,stroke-width:1.5px,color:#f8fafc
+    classDef host fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc
+    classDef client fill:#0f172a,stroke:#38bdf8,stroke-width:1.5px,color:#e2e8f0
+    classDef server fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#f8fafc
+    classDef ext fill:#022c22,stroke:#10b981,stroke-width:1.5px,color:#a7f3d0
+
+    User([👤 User]):::user --> Host
 
     subgraph HostApp ["AI Application Boundary"]
-        Host
-        Client1["🔌 MCP Client A"]
-        Client2["🔌 MCP Client B"]
-        Host --- Client1
-        Host --- Client2
+        Host["🧠 AI Host Orchestrator<br/><small>(Manages Chat, UI, and Model Execution)</small>"]:::host
+        Client1["🔌 MCP Client (GitHub)"]:::client
+        Client2["🔌 MCP Client (PostgreSQL)"]:::client
+        Host --> Client1
+        Host --> Client2
     end
 
     subgraph Servers ["MCP Layer (Independent Processes)"]
-        Server1["📦 GitHub MCP Server"]
-        Server2["🗄️ Database MCP Server"]
+        Server1["📦 GitHub MCP Server"]:::server
+        Server2["🗄️ Database MCP Server"]:::server
     end
 
     subgraph Systems ["External Systems"]
-        GH["GitHub REST API"]
-        DB[("PostgreSQL DB")]
+        GH["GitHub REST API"]:::ext
+        DB[("PostgreSQL DB")]:::ext
     end
 
-    Client1 <==>|MCP Protocol| Server1
-    Client2 <==>|MCP Protocol| Server2
+    Client1 <==>|"MCP Protocol (stdio / SSE)"| Server1
+    Client2 <==>|"MCP Protocol (stdio / SSE)"| Server2
 
     Server1 <--> GH
     Server2 <--> DB
@@ -176,22 +194,25 @@ When MCP is introduced, the architecture shifts from an **N × M** messy mesh ne
 ## Visualizing the Shift: Before vs. After MCP
 
 ```mermaid
-flowchart LR
-    subgraph Mesh ["Without MCP (N × M Mess)"]
-        direction TB
-        App1["AI App 1"] --> GH1["Custom GitHub Code"]
-        App1 --> DB1["Custom DB Code"]
-        App2["AI App 2"] --> GH2["Custom GitHub Code"]
-        App2 --> DB2["Custom DB Code"]
+flowchart TB
+    classDef redBox fill:#1e1b24,stroke:#f43f5e,stroke-width:1.5px,color:#fecdd3
+    classDef greenBox fill:#0f2422,stroke:#10b981,stroke-width:1.5px,color:#a7f3d0
+    classDef mcpHub fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#e0e7ff
+
+    subgraph Before ["❌ WITHOUT MCP: N × M Integration Explosion"]
+        direction LR
+        B_Apps["3 AI Applications"]:::redBox
+        B_Mess["9 Custom Point-to-Point Wrappers<br/><small>Brittle, redundant, hard to maintain</small>"]:::redBox
+        B_Services["3 External Services"]:::redBox
+        B_Apps --> B_Mess --> B_Services
     end
 
-    subgraph Standardized ["With MCP (Standardized Architecture)"]
-        direction TB
-        HostApp["AI Host"] ==> Client["MCP Client"]
-        Client ==>|MCP Protocol| SrvGH["GitHub MCP Server"]
-        Client ==>|MCP Protocol| SrvDB["PostgreSQL MCP Server"]
-        SrvGH --> ExtGH["GitHub API"]
-        SrvDB --> ExtDB[("PostgreSQL")]
+    subgraph After ["✅ WITH MCP: Standardized Hub-and-Spoke"]
+        direction LR
+        A_Apps["N AI Applications"]:::greenBox
+        A_Hub["Universal MCP Protocol Standard<br/><small>Tools • Resources • Prompts</small>"]:::mcpHub
+        A_Services["M External MCP Servers"]:::greenBox
+        A_Apps <===> A_Hub <===> A_Services
     end
 ```
 
@@ -209,23 +230,24 @@ To see how these pieces work together conceptually, trace what happens when a us
 sequenceDiagram
     autonumber
     actor User as 👤 User
-    participant Host as 🖥️ AI Host / App
+    participant Host as 🧠 AI Host
     participant Client as 🔌 MCP Client
-    participant Server as 📦 GitHub MCP Server
+    participant Server as ⚡ GitHub MCP Server
     participant API as 🌐 GitHub API
 
-    User->>Host: Find open bugs assigned to me
-    Host->>Client: Query active servers for available capabilities
-    Client->>Server: Request tool schema definitions
-    Server-->>Client: Returns tools list (e.g., search_issues)
-    Client-->>Host: Feeds available tool schemas to LLM context
-    Host->>Client: LLM selects tool search_issues(type: bug, state: open)
-    Client->>Server: Execute tool search_issues with parameters
+    User->>Host: "Find open bugs assigned to me"
+    Host->>Client: Query active servers for capabilities
+    Client->>Server: tools/list
+    Server-->>Client: Return tools [search_issues, create_pr]
+    Client-->>Host: Provide tool schemas to LLM context
+    Note over Host: LLM selects tool search_issues<br/>with args {type: "bug", state: "open"}
+    Host->>Client: Execute search_issues
+    Client->>Server: tools/call ("search_issues", args)
     Server->>API: HTTP GET /search/issues?...
-    API-->>Server: JSON issue payload
-    Server-->>Client: Formatted result payload
-    Client-->>Host: Passes returned result back to LLM context
-    Host-->>User: Synthesizes final conversational response
+    API-->>Server: 200 OK (Raw Issue JSON)
+    Server-->>Client: Structured MCP content payload
+    Client-->>Host: Tool result passed to LLM reasoning loop
+    Host-->>User: "Here are your 3 open assigned bugs..."
 ```
 
 ### What Happens Step-by-Step?
@@ -275,19 +297,24 @@ Keep this simple stack in mind whenever evaluating MCP architecture:
 
 ```mermaid
 flowchart TB
-    subgraph AppLayer ["1. Application Layer"]
-        App["🧠 AI Application<br/><small>Owns LLM Reasoning, UI, and User State</small>"]
+    classDef l1 fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc
+    classDef l2 fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#e0e7ff
+    classDef l3 fill:#022c22,stroke:#10b981,stroke-width:2px,color:#a7f3d0
+
+    subgraph Layer1 ["1. AI Application Layer"]
+        App["🧠 AI Host Application<br/><small>Owns UI, User Interaction, and LLM Reasoning Loop</small>"]:::l1
     end
 
-    subgraph ProtocolLayer ["2. Standard Protocol Boundary"]
-        Client["🔌 MCP Client"]
-        Transport["⚡ Standard Protocol Transport (stdio / SSE)"]
-        Server["⚙️ MCP Server<br/><small>Exposes Tools, Resources & Prompts</small>"]
-        Client <===> Transport <===> Server
+    subgraph Layer2 ["2. Protocol & Transport Boundary"]
+        direction LR
+        Client["🔌 MCP Client"]:::l2
+        Pipe["⚡ JSON-RPC 2.0 (stdio / SSE)"]:::l2
+        Server["⚙️ MCP Server<br/><small>Exposes Tools, Resources, Prompts</small>"]:::l2
+        Client <===> Pipe <===> Server
     end
 
-    subgraph InfraLayer ["3. External Infrastructure"]
-        Ext["🗄️ External Systems<br/><small>APIs, PostgreSQL DB, Local Filesystem, Git</small>"]
+    subgraph Layer3 ["3. External Infrastructure"]
+        Ext["🗄️ External Systems<br/><small>APIs, PostgreSQL DB, Local Filesystem, Git</small>"]:::l3
     end
 
     App <===> Client

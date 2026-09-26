@@ -39,6 +39,20 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
 
   // MDX content components
   const components = {
+    Callout: ({ children, variant = "info", padding = "8px 8px 2px 8px" }: any) => {
+      const variants: Record<string, { border: string; bg: string; color: string }> = {
+        info:    { border: "#3b82f6", bg: "rgba(23,37,84,0.4)",  color: "#bfdbfe" },
+        success: { border: "#10b981", bg: "rgba(6,60,40,0.4)",   color: "#6ee7b7" },
+        warning: { border: "#f59e0b", bg: "rgba(69,45,5,0.4)",   color: "#fde68a" },
+        danger:  { border: "#ef4444", bg: "rgba(69,10,10,0.4)",  color: "#fca5a5" },
+      };
+      const v = variants[variant] ?? variants.info;
+      return (
+        <div style={{ margin: "1rem 0", borderRadius: "8px", borderLeft: `4px solid ${v.border}`, background: v.bg, padding, color: v.color }}>
+          {children}
+        </div>
+      );
+    },
     h2: (props: any) => (
       <h2 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "2.5rem", marginBottom: "1rem" }} {...props} />
     ),
@@ -50,6 +64,9 @@ export default async function BlogDetailPage(props: { params: Promise<{ slug: st
     ),
     ul: (props: any) => (
       <ul style={{ color: "var(--text-secondary)", paddingLeft: "1.5rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }} {...props} />
+    ),
+    ol: (props: any) => (
+      <ol style={{ color: "var(--text-secondary)", paddingLeft: "1.5rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }} {...props} />
     ),
     li: (props: any) => (
       <li style={{ fontSize: "1.0625rem", lineHeight: 1.7 }} {...props} />
